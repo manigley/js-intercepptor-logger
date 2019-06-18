@@ -1,0 +1,124 @@
+<html>
+<head>
+<title>LogginService</title>
+
+<!--Import Google Icon Font-->
+<link href="resources/css/materialize-font.css" rel="stylesheet">
+<!--Import materialize.css-->
+<link type="text/css" rel="stylesheet"
+	href="resources/css/materialize.min.css" media="screen,projection" />
+<link href="resources/css/application.css" rel="stylesheet">
+
+</head>
+
+<body>
+	<header>
+		<nav class="teal">
+			<div class="nav-wrapper">
+				<a href="#" class="brand-logo center">HttpRequestLogger</a>
+				<ul class="right hide-on-med-and-down">
+					<li><a class="waves-effect waves-light btn" href="LogReaderServlet"
+						target="_blank">Logs <i class="material-icons right">archive</i>
+					</a></li>
+					<li><a class="waves-effect waves-light btn"
+						href="jsfInterception.jsf" target="_blank">JSF Interception <i
+							class="material-icons right">web</i>
+					</a></li>
+				</ul>
+			</div>
+		</nav>
+	</header>
+	<br>
+	<main class="container">
+		<div class="row">
+			<div class="col s12">
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="url" type="url" class="validate" required="required"> <label
+							for="url">URL:</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="interval" type="number" class="validate" required="required"> <label
+							for="interval (ms)">interval:</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="loops" type="number" class="validate" required="required"> <label
+							for="loops">loops:</label>
+					</div>
+				</div>
+				<div class="row" style="text-align: center;">
+					<button class="btn waves-effect waves-light" onclick="doMultiGet();">
+						Start<i class="material-icons right">send</i>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="progress" id="progressBar" style="display: none;">
+	        <div class="indeterminate"></div>
+	    </div>
+	</main>
+
+	<footer class="page-footer teal">
+		<div class="container"></div>
+	</footer>
+
+	<!--JavaScript at end of body for optimized loading-->
+	<script type="text/javascript" src="resources/js/materialize.min.js"></script>
+	<script type="text/javascript" src="resources/js/materialize-utils.js"></script>
+	<script src="resources/js/httpLogger.js"></script>
+
+	<script type="text/javascript">
+	var initialUrlParams = new URLSearchParams(window.location.search);
+	document.getElementById("url").value = initialUrlParams.get("url");
+	document.getElementById("interval").value = initialUrlParams.get("interval");
+	document.getElementById("loops").value = initialUrlParams.get("loops");
+
+	function doMultiGet() {
+		
+		var url = document.getElementById("url").value
+		var interval = document.getElementById("interval").value
+		var loops = document.getElementById("loops").value
+
+		if (validateInput(url, interval, loops)) {
+			disableElements();
+			infoMessage("HttpLogger initialisiert<br>URL: " + url);
+			var counter = 0;
+			var loop = setInterval(function(){ 
+				httpLogger.doLoggedHttpRequest(url, "GET");
+				infoMessage("HttpRequest gestartet: " + (counter + 1) + "/" + loops);
+				counter++; 
+				if (counter >= loops) {
+					enableElements();
+			        clearInterval(loop);
+					infoMessage("Fertig: " + (counter) + "/" + loops);
+			    }
+		    }, interval);	
+		}
+		
+	}
+
+	var regexUrl = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+	function validateInput(url, interval, loops) {
+		var valid = true;
+		if (!url) {
+			errorMessage("bitte URL eingeben");
+			valid = false;
+		} else if (!regexUrl.test(url)) {
+			errorMessage("die Eingabe scheint keine g&uuml;ltige URL zusein");
+			valid = false;
+		} if (!interval) {
+			errorMessage("bitte interval eingeben");
+			valid = false;
+		} if (!loops) {
+			errorMessage("bitte loops eingeben");
+			valid = false;
+		}
+		return valid;
+	}
+	</script>
+</body>
+</html>

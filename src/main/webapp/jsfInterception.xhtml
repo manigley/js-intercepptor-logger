@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>JSF Ajax Interception</title>
+</h:head>
+<h:body>
+	<p:layout fullPage="true">
+		<p:layoutUnit position="center">
+			<p:growl id="msg" widgetVar="msg" autoUpdate="false"
+				showDetail="false" />
+			<center>
+				<h1>JSF Ajax Interception</h1>
+				<h:form>
+					<p:panelGrid columns="2" styleClass="ui-noborder" style="margin-bottom:50px;">
+						<p:outputLabel for="name" value="Name" />
+						<p:inputText id="name" value="#{greetingBean.name}"
+							required="true" />
+					</p:panelGrid>
+					<p:commandButton actionListener="#{greetingBean.greet()}"
+						update=":msg" validateClient="true" value="send" />
+				</h:form>
+			</center>
+		</p:layoutUnit>
+	</p:layout>
+
+	<script src="resources/js/httpLogger.js"></script>
+	<script src="resources/js/httpLogger-interceptor.js"></script>
+</h:body>
+</html>
